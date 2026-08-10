@@ -19,14 +19,9 @@ jobs:
         run: |
           export THEOS=$HOME/theos
           rm -rf $THEOS
-          
-          # استنساخ ثيوس مع كافة ملفاته الفرعية (بما فيها dm.pl) من أول مرة وبدون أخطاء
           git clone --recursive https://github.com/theos/theos.git $THEOS
-          
-          # إعداد مجلد الـ SDKs بشكل نظيف
           rm -rf $THEOS/sdks
           git clone --depth=1 https://github.com/theos/sdks.git $THEOS/sdks
-          
           echo "$THEOS/bin" >> $GITHUB_PATH
 
       - name: Build deb package
