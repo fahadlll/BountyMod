@@ -5,33 +5,19 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/theos/theos:latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install Dependencies
+      - name: Setup SDK
         run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential git curl libxml2-utils clang lld make dpkg-dev
-
-      - name: Setup Theos & Toolchain Fix
-        run: |
-          git clone --recursive https://github.com/theos/theos.git $HOME/theos
-          rm -rf $HOME/theos/sdks
-          git clone --depth=1 https://github.com/theos/sdks.git $HOME/theos/sdks
-          
-          # إنشاء مجلد الـ toolchain المفقود وربطه بـ clang النظام لتجنب خطأ 127
-          mkdir -p $HOME/theos/toolchain/linux/iphone/bin
-          ln -sf /usr/bin/clang $HOME/theos/toolchain/linux/iphone/bin/clang
-          ln -sf /usr/bin/clang++ $HOME/theos/toolchain/linux/iphone/bin/clang++
-          ln -sf /usr/bin/ld.lld $HOME/theos/toolchain/linux/iphone/bin/ld || ln -sf /usr/bin/ld $HOME/theos/toolchain/linux/iphone/bin/ld
-
-          echo "$HOME/theos/bin" >> $GITHUB_PATH
+          git clone --depth=1 https://github.com/theos/sdks.git $THEOS/sdks
 
       - name: Build deb package
         run: |
-          export THEOS=$HOME/theos
           make package THEOS_PACKAGE_SCHEME=rootless
 
       - name: Upload artifact
