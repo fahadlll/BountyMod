@@ -15,12 +15,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential git curl libxml2-utils clang lld make dpkg-dev
 
-      - name: Setup Theos
+      - name: Setup Theos & SDKs
         run: |
           git clone --recursive https://github.com/theos/theos.git $HOME/theos
-          if [ ! -d "$HOME/theos/sdks" ]; then
-            git clone --depth=1 https://github.com/theos/sdks.git $HOME/theos/sdks
-          fi
+          rm -rf $HOME/theos/sdks
+          git clone --depth=1 https://github.com/theos/sdks.git $HOME/theos/sdks
           echo "$HOME/theos/bin" >> $GITHUB_PATH
 
       - name: Build deb package
