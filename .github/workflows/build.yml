@@ -1,0 +1,23 @@
+name: Build Theos Tweak
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: axi0m/theos:latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build deb package
+        run: |
+          make package
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: BountyMod-deb
+          path: packages/*.deb
