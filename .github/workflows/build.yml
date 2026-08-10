@@ -18,10 +18,11 @@ jobs:
       - name: Setup Theos & Official Toolchain
         run: |
           export THEOS=$HOME/theos
-          git clone --recursive https://github.com/theos/theos.git $THEOS
-          git clone --depth=1 https://github.com/theos/sdks.git $THEOS/sdks
           
-          # تثبيت أداة الـ toolchain الرسمية الخاصة بلينكس لضمان عدم ظهور أخطاء clang أو ld
+          # تحميل الـ Theos مع كل ملفاته الفرعية دفعة واحدة وبدون تكرار
+          git clone --recursive https://github.com/theos/theos.git $THEOS
+          
+          # تثبيت أداة الـ toolchain الرسمية الخاصة بلينكس لضمان استقرار البناء
           bash -c "$(curl -fsSL https://raw.githubusercontent.com/theos/theos/master/bin/install-theos-toolchain.sh)" || true
           
           echo "$THEOS/bin" >> $GITHUB_PATH
