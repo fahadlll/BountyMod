@@ -13,22 +13,19 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential git curl libxml2-utils 
+          sudo apt-get install -y build-essential git curl libxml2-utils clang
 
-      - name: Setup Theos & Toolchain
+      - name: Setup Theos
         run: |
           git clone --recursive https://github.com/theos/theos.git $HOME/theos
           rm -rf $HOME/theos/sdks
           git clone --depth=1 https://github.com/theos/sdks.git $HOME/theos/sdks
-          if [ ! -d "$HOME/theos/toolchain/linux" ]; then
-            git clone --depth=1 https://github.com/theos/toolchainfiles.git $HOME/theos/toolchainfiles || true
-          fi
-          bash -c "$(curl -fsSL https://raw.githubusercontent.com/theos/theos/master/bin/install-theos-lib)" || true
           echo "$HOME/theos/bin" >> $GITHUB_PATH
 
       - name: Build deb package
         run: |
           export THEOS=$HOME/theos
+          export THEOS_DEVICE_IP=
           make package THEOS_PACKAGE_SCHEME=rootless
 
       - name: Upload artifact
