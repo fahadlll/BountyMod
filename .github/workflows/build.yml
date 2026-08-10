@@ -10,23 +10,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential git curl libxml2-utils
-
       - name: Setup Theos
-        run: |
-          git clone --recursive https://github.com/theos/theos.git $HOME/theos
-          if [ ! -d "$HOME/theos/sdks" ]; then
-            git clone https://github.com/theos/sdks.git $HOME/theos/sdks
-          fi
-          echo "$HOME/theos/bin" >> $GITHUB_PATH
+        uses: abrahamcm/theos-action@v1
 
       - name: Build deb package
-        run: |
-          export THEOS=$HOME/theos
-          make package
+        run: make package
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
