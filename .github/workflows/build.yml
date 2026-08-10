@@ -4,22 +4,17 @@ on: [push]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Setup Theos
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential git ldid curl libxml2-utils
-          git clone --recursive https://github.com/theos/theos.git $HOME/theos
+        uses: abrahamcm/theos-action@v1
 
       - name: Build deb package
-        run: |
-          export THEOS=$HOME/theos
-          make package
+        run: make package
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
