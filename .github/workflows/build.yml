@@ -5,14 +5,25 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: axi0m/theos:latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential git ldid curl libxml2-utils zip unzip
+
+      - name: Setup Theos
+        run: |
+          git clone --recursive https://github.com/theos/theos.git $HOME/theos
+          echo "$HOME/theos/bin" >> $GITHUB_PATH
+
       - name: Build deb package
-        run: make package
+        run: |
+          export THEOS=$HOME/theos
+          make package
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
