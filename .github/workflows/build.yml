@@ -22,10 +22,11 @@ jobs:
           git clone --depth=1 https://github.com/theos/sdks.git $HOME/theos/sdks
           echo "$HOME/theos/bin" >> $GITHUB_PATH
 
-      - name: Build deb package
+      - name: Clean and Build
         run: |
           export THEOS=$HOME/theos
-          make package
+          make clean
+          make package THEOS_PACKAGE_SCHEME=rootless
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
