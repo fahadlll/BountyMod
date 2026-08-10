@@ -15,22 +15,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential git curl libxml2-utils clang lld
 
-      - name: Setup Theos & Toolchain
+      - name: Setup Theos & SDKs
         run: |
           git clone --recursive https://github.com/theos/theos.git $HOME/theos
           rm -rf $HOME/theos/sdks
           git clone --depth=1 https://github.com/theos/sdks.git $HOME/theos/sdks
-          
-          mkdir -p $HOME/theos/toolchain/linux/iphone/bin
-          if [ -f /usr/bin/clang ]; then
-            ln -sf /usr/bin/clang $HOME/theos/toolchain/linux/iphone/bin/clang
-          fi
-          if [ -f /usr/bin/ld.lld ]; then
-            ln -sf /usr/bin/ld.lld $HOME/theos/toolchain/linux/iphone/bin/ld
-          elif [ -f /usr/bin/lld ]; then
-            ln -sf /usr/bin/lld $HOME/theos/toolchain/linux/iphone/bin/ld
-          fi
-
           echo "$HOME/theos/bin" >> $GITHUB_PATH
 
       - name: Build deb package
