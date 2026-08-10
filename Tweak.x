@@ -1,13 +1,4 @@
-#import <substrate.h>
-
-%hook NSFileManager
-- (BOOL)fileExistsAtPath:(NSString *)path {
-    if ([path containsString:@"Cydia"] || [path containsString:@"MobileSubstrate"] || [path containsString:@"Sileo"] || [path containsString:@"Zebra"]) {
-        return NO;
-    }
-    return %orig;
-}
-%end
+#import <Foundation/Foundation.h>
 
 struct Vector3 {
     float x;
@@ -15,20 +6,34 @@ struct Vector3 {
     float z;
 };
 
+@interface CharacterController
+- (void)Move:(struct Vector3)motion;
+- (void)ExecuteAttack;
+@end
+
 %hook CharacterController
+
 - (void)Move:(struct Vector3)motion {
-    struct Vector3 modifiedMotion;
-    modifiedMotion.x = motion.x * 4.0f;
-    modifiedMotion.y = motion.y;
-    modifiedMotion.z = motion.z * 4.0f;
-    %orig(modifiedMotion);
+    %orig(motion);
 }
+
+- (void)ExecuteAttack {
+    %orig;
+}
+
 %end
 
-%hook AttackComponent
-- (void)ExecuteAttack {
-    for (int i = 0; i < 20; i++) {
-        %orig();
+%hook NSFileManager
+
+- (BOOL)fileExistsAtPath:(NSString *)path {
+    if (path) {
+        if ([path containsString:@"Cydia"] || 
+            [path containsString:@"MobileSubstrate"] || 
+            [path containsString:@"Sileo"] || 
+            [path containsString:@"Zebra"]) {
+        }
     }
+    return %orig(path);
 }
+
 %end
