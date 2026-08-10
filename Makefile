@@ -1,5 +1,8 @@
-TARGET = iphone:clang:latest:14.0
-ARCHS = arm64
+export THEOS_DEVICE_IP = localhost
+export THEOS_DEVICE_PORT = 2222
+
+TARGET := iphone:clang:latest:15.0
+ARCHS := arm64
 
 include $(THEOS)/makefiles/common.mk
 
