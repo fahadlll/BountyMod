@@ -10,34 +10,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential git curl libxml2-utils clang lld make dpkg-dev xz-utils bzip2 tar
-
-      - name: Setup Theos and Perfect Toolchain Link
-        run: |
-          export THEOS=$HOME/theos
-          git clone --recursive https://github.com/theos/theos.git $THEOS
-          
-          # إنشاء وتثبيت مسارات الـ toolchain المفقودة بالكامل لتوجيه الـ clang والـ ld بشكل صحيح
-          mkdir -p $THEOS/toolchain/linux/iphone/bin
-          ln -sf /usr/bin/clang $THEOS/toolchain/linux/iphone/bin/clang
-          ln -sf /usr/bin/clang++ $THEOS/toolchain/linux/iphone/bin/clang++
-          ln -sf /usr/bin/llvm-ar $THEOS/toolchain/linux/iphone/bin/ar
-          ln -sf /usr/bin/ld.lld $THEOS/toolchain/linux/iphone/bin/ld
-          
-          echo "$THEOS/bin" >> $GITHUB_PATH
-
-      - name: Install iOS SDKs
-        run: |
-          rm -rf $HOME/theos/sdks
-          git clone --depth=1 https://github.com/theos/sdks.git $HOME/theos/sdks
-
-      - name: Build deb package
-        run: |
-          export THEOS=$HOME/theos
-          make package THEOS_PACKAGE_SCHEME=rootless
+      - name: Build Tweak
+        uses: theos/action@v1
+        with:
+          package: rootless
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
