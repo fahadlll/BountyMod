@@ -4,14 +4,12 @@ on: [push]
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
+    container: axi0m/theos:latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Setup Theos
-        uses: abrahamcm/theos-action@v1
 
       - name: Build deb package
         run: make package
