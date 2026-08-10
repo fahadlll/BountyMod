@@ -13,23 +13,22 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential git curl libxml2-utils clang
+          sudo apt-get install -y build-essential git curl libxml2-utils clang ldid
 
-      - name: Setup Theos & Toolchain
+      - name: Setup Theos
         run: |
           git clone --recursive https://github.com/theos/theos.git $HOME/theos
           rm -rf $HOME/theos/sdks
           git clone --depth=1 https://github.com/theos/sdks.git $HOME/theos/sdks
           
-          # تثبيت أدوات اللينكس المفقودة للـ toolchain
-          mkdir -p $HOME/theos/toolchain/linux
-          git clone --depth=1 https://github.com/theos/toolchain-linux.git $HOME/theos/toolchain/linux/iphone || true
-          
+          # تثبيت أدوات المترجم وتوجيه المسار لتجنب خطأ 127
+          sudo ln -s /usr/bin/clang /usr/bin/xcrun || true
           echo "$HOME/theos/bin" >> $GITHUB_PATH
 
       - name: Build deb package
         run: |
           export THEOS=$HOME/theos
+          export TARGET=iphone:latest:14.0
           make package THEOS_PACKAGE_SCHEME=rootless
 
       - name: Upload artifact
