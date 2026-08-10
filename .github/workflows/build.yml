@@ -13,7 +13,7 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential git curl libxml2-utils clang
+          sudo apt-get install -y build-essential git curl libxml2-utils clang lld
 
       - name: Setup Theos & Toolchain
         run: |
@@ -21,14 +21,14 @@ jobs:
           rm -rf $HOME/theos/sdks
           git clone --depth=1 https://github.com/theos/sdks.git $HOME/theos/sdks
           
-          # تثبيت الـ toolchain الخاصة باللينكس من المستودع البديل المباشر
-          mkdir -p $HOME/theos/toolchain/linux
-          git clone --depth=1 https://github.com/theos/sdks.git $HOME/theos/toolchain/linux/iphone || true
-          
-          # إنشاء الوصلة الصحيحة لكي يشاهد النظام الـ clang ويحل مشكلة 127
+          mkdir -p $HOME/theos/toolchain/linux/iphone/bin
           if [ -f /usr/bin/clang ]; then
-            mkdir -p $HOME/theos/toolchain/linux/iphone/bin
-            ln -s /usr/bin/clang $HOME/theos/toolchain/linux/iphone/bin/clang
+            ln -sf /usr/bin/clang $HOME/theos/toolchain/linux/iphone/bin/clang
+          fi
+          if [ -f /usr/bin/ld.lld ]; then
+            ln -sf /usr/bin/ld.lld $HOME/theos/toolchain/linux/iphone/bin/ld
+          elif [ -f /usr/bin/lld ]; then
+            ln -sf /usr/bin/lld $HOME/theos/toolchain/linux/iphone/bin/ld
           fi
 
           echo "$HOME/theos/bin" >> $GITHUB_PATH
