@@ -13,15 +13,23 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential git curl libxml2-utils make dpkg-dev xz-utils bzip2 tar perl
+          sudo apt-get install -y build-essential git curl libxml2-utils make dpkg-dev xz-utils bzip2 tar perl clang lld
 
       - name: Setup Theos and iOS SDKs
         run: |
           export THEOS=$HOME/theos
           rm -rf $THEOS
           git clone --recursive https://github.com/theos/theos.git $THEOS
+          
           rm -rf $THEOS/sdks
           git clone --depth=1 https://github.com/theos/sdks.git $THEOS/sdks
+          
+          mkdir -p $THEOS/toolchain/linux/iphone/bin
+          ln -sf /usr/bin/clang $THEOS/toolchain/linux/iphone/bin/clang
+          ln -sf /usr/bin/clang++ $THEOS/toolchain/linux/iphone/bin/clang++
+          ln -sf /usr/bin/llvm-ar $THEOS/toolchain/linux/iphone/bin/ar
+          ln -sf /usr/bin/ld.lld $THEOS/toolchain/linux/iphone/bin/ld
+          
           echo "$THEOS/bin" >> $GITHUB_PATH
 
       - name: Build deb package
