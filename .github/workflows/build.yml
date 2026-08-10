@@ -15,14 +15,14 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential git curl libxml2-utils clang lld make dpkg-dev xz-utils bzip2 tar
 
-      - name: Setup Theos and Fix Toolchain
+      - name: Setup Theos and Official Linux Toolchain
         run: |
           export THEOS=$HOME/theos
           git clone --recursive https://github.com/theos/theos.git $THEOS
-          mkdir -p $THEOS/toolchain/linux/iphone/bin
-          ln -sf /usr/bin/clang $THEOS/toolchain/linux/iphone/bin/clang
-          ln -sf /usr/bin/clang++ $THEOS/toolchain/linux/iphone/bin/clang++
-          ln -sf /usr/bin/ld.lld $THEOS/toolchain/linux/iphone/bin/ld || ln -sf /usr/bin/ld $THEOS/toolchain/linux/iphone/bin/ld
+          
+          # تثبيت أدوات المطورين الرسمية الخاصة بـ Theos على لينكس لتجنب أخطاء الرابط تماماً
+          bash -c "$(curl -fsSL https://raw.githubusercontent.com/theos/theos/master/bin/install-theos-toolchain.sh)"
+          
           echo "$THEOS/bin" >> $GITHUB_PATH
 
       - name: Install iOS SDKs
