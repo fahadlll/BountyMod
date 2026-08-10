@@ -5,19 +5,30 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/theos/theos:latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup SDK
+      - name: Install Dependencies
         run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential git curl libxml2-utils clang lld make dpkg-dev xz-utils bzip2 tar
+
+      - name: Setup Theos & Official Toolchain
+        run: |
+          export THEOS=$HOME/theos
+          git clone --recursive https://github.com/theos/theos.git $THEOS
           git clone --depth=1 https://github.com/theos/sdks.git $THEOS/sdks
+          
+          # تثبيت أداة الـ toolchain الرسمية الخاصة بلينكس لضمان عدم ظهور أخطاء clang أو ld
+          bash -c "$(curl -fsSL https://raw.githubusercontent.com/theos/theos/master/bin/install-theos-toolchain.sh)" || true
+          
+          echo "$THEOS/bin" >> $GITHUB_PATH
 
       - name: Build deb package
         run: |
+          export THEOS=$HOME/theos
           make package THEOS_PACKAGE_SCHEME=rootless
 
       - name: Upload artifact
