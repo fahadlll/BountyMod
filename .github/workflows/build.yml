@@ -15,17 +15,17 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential git curl libxml2-utils clang lld make dpkg-dev xz-utils bzip2 tar
 
-      - name: Setup Theos & Official Toolchain
+      - name: Setup Theos and Toolchain
         run: |
           export THEOS=$HOME/theos
-          
-          # تحميل الـ Theos مع كل ملفاته الفرعية دفعة واحدة وبدون تكرار
           git clone --recursive https://github.com/theos/theos.git $THEOS
-          
-          # تثبيت أداة الـ toolchain الرسمية الخاصة بلينكس لضمان استقرار البناء
           bash -c "$(curl -fsSL https://raw.githubusercontent.com/theos/theos/master/bin/install-theos-toolchain.sh)" || true
-          
           echo "$THEOS/bin" >> $GITHUB_PATH
+
+      - name: Install iOS SDKs
+        run: |
+          rm -rf $HOME/theos/sdks
+          git clone --depth=1 https://github.com/theos/sdks.git $HOME/theos/sdks
 
       - name: Build deb package
         run: |
