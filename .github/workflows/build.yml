@@ -15,11 +15,17 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential git curl libxml2-utils clang lld make dpkg-dev xz-utils bzip2 tar
 
-      - name: Setup Theos and Toolchain
+      - name: Setup Theos and Fix Toolchain
         run: |
           export THEOS=$HOME/theos
           git clone --recursive https://github.com/theos/theos.git $THEOS
-          bash -c "$(curl -fsSL https://raw.githubusercontent.com/theos/theos/master/bin/install-theos-toolchain.sh)" || true
+          
+          # إنشاء مسار الـ toolchain المفقود وربطه بأداة clang النظام لتجنب خطأ 127 و No such file
+          mkdir -p $THEOS/toolchain/linux/iphone/bin
+          ln -sf /usr/bin/clang $THEOS/toolchain/linux/iphone/bin/clang
+          ln -sf /usr/bin/clang++ $THEOS/toolchain/linux/iphone/bin/clang++
+          ln -sf /usr/bin/ld.lld $THEOS/toolchain/linux/iphone/bin/ld || ln -sf /usr/bin/ld $THEOS/toolchain/linux/iphone/bin/ld
+
           echo "$THEOS/bin" >> $GITHUB_PATH
 
       - name: Install iOS SDKs
