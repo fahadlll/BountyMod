@@ -1,0 +1,8 @@
+Package: com.yourname.bountyjump
+Name: BountyRush Mod
+Author: You
+Depends: mobilesubstrate
+Architecture: iphoneos-arm
+Version: 1.0.0
+Description: Speed and Multi-hit Mod for Bounty Rush
+Section: Tweaks
